@@ -1,22 +1,3 @@
-### PICKLING IN PYTHON
-
-Python pickle module is used for serializing and de-serializing a Python object structure. Any object in Python can be pickled so that it can be saved on disk. What pickle does is that it “serializes” the object first before writing it to file. Pickling is a way to convert a python object (list, dict, etc.) into a character stream. The idea is that this character stream contains all the information necessary to reconstruct the object in another python script.
-
-Storing data into pickle file
-```python
-import pickle
-x = [1, 2, 3]
-file = open('filename', 'wb or ab')
-pickle.dump(x, file)
-file.close()
-```
-Loading data from a pickled file
-```python
-import pickle
-file = open('filename', 'rb')
-x = pickle.load(file)
-file.close()
-```
 ### NEURAL NETWORKS
 
 Neural networks are multi-layer networks of neurons (the blue and magenta nodes in the chart below) that we use to classify things, make predictions, etc.Below is the diagram of a simple neural network with five inputs, 5 outputs, and two hidden layers of neurons.
@@ -317,5 +298,23 @@ $ \Delta \theta = - \frac{RMS[\Delta\theta]+{t-1}}{RNS[g_t]} . g_t  $
 - RMSProp tries to resolve Adagrad’s radically diminishing learning rates by using a moving average of the squared gradient. It utilizes the magnitude of the recent gradient descents to normalize the gradient.
 - In RMSProp learning rate gets adjusted automatically and it chooses a different learning rate for each parameter.
 - RMSProp divides the learning rate by the average of the exponential decay of squared gradients.
+### PICKLING IN PYTHON
 
+Python pickle module is used for serializing and de-serializing a Python object structure. Any object in Python can be pickled so that it can be saved on disk. What pickle does is that it “serializes” the object first before writing it to file. Pickling is a way to convert a python object (list, dict, etc.) into a character stream. The idea is that this character stream contains all the information necessary to reconstruct the object in another python script.
+
+Storing data into pickle file
+```python
+import pickle
+x = [1, 2, 3]
+file = open('filename', 'wb or ab')
+pickle.dump(x, file)
+file.close()
+```
+Loading data from a pickled file
+```python
+import pickle
+file = open('filename', 'rb')
+x = pickle.load(file)
+file.close()
+```
 
