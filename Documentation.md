@@ -69,7 +69,7 @@ We can use matrix math to summarize this calculation (remember our notation rule
 	 alt = "Simple Neuron Activation Formula"
  	 align = "middle"
  	 style="height: 35%;
- 	 margin-left: 50px;" /> 
+ 	 margin-left: 50px;" />   
 For any layer of a neural network where the prior layer is m elements deep and the current layer is n elements deep, this generalizes to:  
 
 $[W] @ [X] + [Bias] = [Z]$ 
