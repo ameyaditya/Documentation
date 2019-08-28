@@ -234,7 +234,8 @@ Optimizers update the weight parameters to minimize the loss function. Loss func
 
 ##### Types of Optimisers
 
-**Momentum**
+**Momentum**  
+
 Momentum is like a ball rolling downhill. The ball will gain momentum as it rolls down the hill.  
 <img src="mom.png"
 	 align="middle"
@@ -245,10 +246,13 @@ Momentum helps accelerate Gradient Descent(GD) when we have surfaces that curve 
 For updating the weights it takes the gradient of the current step as well as the gradient of the previous time steps. This helps us move faster towards convergence.  
 Convergence happens faster when we apply momentum optimizer to surfaces with curves.  
 
-$\nu _t = \gamma \nu _{t-1} + \eta \nabla J(\theta; x, y) $  
-$ \theta = \theta - \nu _t $  
+<div style="border: 1px solid black;">
+$$\nu _t = \gamma \nu _{t-1} + \eta \nabla J(\theta; x, y) $$  
+$$ \theta = \theta - \nu _t $$  
+</div>
 
-**Nesterov accelerated gradient(NAG)**
+**Nesterov accelerated gradient(NAG)** 
+
 Nesterov acceleration optimization is like a ball rolling down the hill but knows exactly when to slow down before the gradient of the hill increases again.  
 
 We calculate the gradient not with respect to the current step but with respect to the future step. We evaluate the gradient of the looked ahead and based on the importance then update the weights.  
@@ -261,11 +265,14 @@ We calculate the gradient not with respect to the current step but with respect 
 
 NAG is like you are going down the hill where we can look ahead in the future. This way we can optimize our descent faster. Works slightly better than standard Momentum.  
 
-$ \theta = \theta - \nu _t $  
-$\nu _t = \gamma \nu _{t-1} + \eta \nabla J(\theta - \gamma \nu _{t-1}) $   
-$ \theta - \gamma \nu _{t-1}$ is the gradient of looked ahead  
+<div style="border: 1px solid black;">
+$$ \theta = \theta - \nu _t $$  
+$$\nu _t = \gamma \nu _{t-1} + \eta \nabla J(\theta - \gamma \nu _{t-1}) $$   
+$$ \theta - \gamma \nu _{t-1}$$ <center>is the gradient of looked ahead</center> 
+</div>
 
-**Adagrad — Adaptive Gradient Algorithm**
+
+**Adagrad — Adaptive Gradient Algorithm**  
 
 We need to tune the learning rate in Momentum and NAG which is an expensive process.  
 
@@ -275,29 +282,160 @@ It is well suited when we have sparse data as in large scale neural networks. Gl
 
 For SGD, Momentum, and NAG we update for all parameters $\theta$ at once. We also use the same learning rate $\eta$. In Adagrad we use different learning rate for every parameter $\theta$ for every time step $t$  
 
-$\theta _{t+1} = \theta _t - \frac{\eta}{\sqrt{G_t + \epsilon}}.g_t$   
-G<sub>t</sub>  is sum of squares of the past gradients w.r.t. to all parameters $\theta$    
+<div style="border: 1px solid black;">
+$$\theta _{t+1} = \theta _t - \frac{\eta}{\sqrt{G_t + \epsilon}}.g_t$$   
+<center>G<sub>t</sub>  is sum of squares of the past gradients w.r.t. to all parameters $\theta$</center>
+</div>
 
-**Adagrad eliminates the need to manually tune the learning rate.**  
+**Adagrad eliminates the need to manually tune the learning rate.**    
 
 In the denominator, we accumulate the sum of the square of the past gradients. Each term is a positive term so it keeps on growing to make the learning rate η infinitesimally small to the point that algorithm is no longer able learning. **Adadelta, RMSProp, and adam tries to resolve Adagrad’s radically diminishing learning rates.**  
 
-**Adadelta**
+**Adadelta**  
 
 - Adadelta is an extension of Adagrad and it also tries to reduce Adagrad’s aggressive, monotonically reducing the learning rate
 - It does this by restricting the window of the past accumulated gradient to some fixed size of w. Running average at time t then depends on the previous average and the current gradient
 - In Adadelta we do not need to set the default learning rate as we take the ratio of the running average of the previous time steps to the current gradient
-
-$\theta _{t+1} = \theta _t + \Delta \theta _t $  
+<div style="border: 1px solid black;">
+$$\theta _{t+1} = \theta _t + \Delta \theta _t $$ 
 <br>
-$ \Delta \theta = - \frac{RMS[\Delta\theta]+{t-1}}{RNS[g_t]} . g_t  $
+$$ \Delta \theta = - \frac{RMS[\Delta\theta]+{t-1}}{RNS[g_t]} . g_t  $$
+</div>
 
-**RMSProp**
+
+**RMSProp**  
 
 - RMSProp is Root Mean Square Propagation. It was devised by Geoffrey Hinton.
 - RMSProp tries to resolve Adagrad’s radically diminishing learning rates by using a moving average of the squared gradient. It utilizes the magnitude of the recent gradient descents to normalize the gradient.
 - In RMSProp learning rate gets adjusted automatically and it chooses a different learning rate for each parameter.
 - RMSProp divides the learning rate by the average of the exponential decay of squared gradients.
+<div style="border: 1px solid black;">
+$$ \theta _{t+1} = \theta _t - \frac{\eta}{\sqrt{(1-\gamma)g^2_{t-1} + \gamma g_t + \epsilon}}. g_t$$
+</div>
+
+**Adam — Adaptive Moment Estimation**  
+
+- Another method that calculates the individual adaptive learning rate for each parameter from estimates of first and second moments of the gradients.
+- It also reduces the radically diminishing learning rates of Adagrad
+- Adam can be viewed as a combination of Adagrad, which works well on sparse gradients and RMSprop which works well in online and nonstationary settings.
+- Adam implements the exponential moving average of the gradients to scale the learning rate instead of a simple average as in Adagrad. It keeps an exponentially decaying average of past gradients
+- Adam is computationally efficient and has very little memory requirement
+- Adam optimizer is one of the most popular gradient descent optimization algorithms
+
+Adam algorithm first updates the exponential moving averages of the gradient($m_t$) and the squared gradient($v_t$) which is the estimates of the first and second moment.  
+
+Hyper-parameters $\beta _1$,$\beta _2$ $\in$ [0, 1) control the exponential decay rates of these moving averages as shown below  
+
+<div style="border: 1px solid black;">
+$$m_t = \beta _1 m_{t-1} + (1 - \beta _1) g_t$$
+$$ v_t = \beta _2 v_{t-1} + (1 - \beta _2) g^2_t $$
+<center>$m_t$ and $v_t$ are estimates of first and second moment simultaneously.</center>  
+</div>
+
+Moving averages are initialized as 0 leading to moment estimates that are biased around 0 especially during the initial timesteps. This initialization bias can be easily counteracted resulting in bias-corrected estimates  
+<div style="border: 1px solid black;">
+$$\hat{m_t} = \frac{m_t}{1 - \beta^t _1}$$
+$$\hat{v_t} = \frac{v_t}{1 - \beta^t _2}$$
+<center>$\hat{m_t}$ and $\hat{v_t}$ are bias corrected estimates of first and second moment respectively.</center>  
+</div>
+
+<br>
+
+Finally. we update the parameter as shown below.  
+<div style="border: 1px solid black;">
+$$\theta _{t+1} = \theta _t - \frac{\eta \hat{m_t}}{\sqrt{\hat{v_t} + \epsilon}}$$  
+</div>
+
+**Nadam- Nesterov-accelerated Adaptive Moment Estimation**   
+
+- Nadam combines NAG and Adam
+- Nadam is employed for noisy gradients or for gradients with high curvatures
+- The learning process is accelerated by summing up the exponential decay of the moving averages for the previous and current gradient
+
+In the diagram below we see can see how different optimizer will converge to the minimum. Adagrad, Adadelta, and RMSprop headed off immediately in the right direction and converge. Momentum and NAG were led off-track, evoking the image of a ball rolling down the hill. NAG corrected itself quickly.  
+
+<img src="cmpr.png"
+	 alt="Optimizers comparision"
+	 align="middle"
+	 style="height: 50%;">
+
+### CONVOLUTION NEURAL NETWORKS
+
+Convolution neural networks is about detecting features in images. Researchers built multiple computer vision techniques to deal with these issues: SIFT, FAST, SURF, BRIEF, etc. However, similar problems arose: the detectors were either too general or too over-engineered. Humans were designing these feature detectors, and that made them either too simple or hard to generalize, thus the need to use neural networks came into picture.
+
+#### Why not Traditional Multilayer Perceptron(MLP) for Images
+
+There are several drawbacks of MLP’s, especially when it comes to image processing. MLPs use one perceptron for each input (e.g. pixel in an image, multiplied by 3 in RGB case). The amount of weights rapidly becomes unmanageable for large images. For a 224 x 224 pixel image with 3 color channels there are around 150,000 weights that must be trained! As a result, difficulties arise whilst training and overfitting can occur.  
+
+Another common problem is that MLPs react differently to an input (images) and its shifted version — they are not translation invariant. For example, if a picture of a cat appears in the top left of the image in one picture and the bottom right of another picture, the MLP will try to correct itself and assume that a cat will always appear in this section of the image.  
+
+Clearly, MLPs are not the best idea to use for image processing. One of the main problems is that spatial information is lost when the image is flattened into an MLP. Nodes that are close together are important because they help to define the features of an image. We thus need a way to leverage the spatial correlation of the image features (pixels) in such a way that we can see the cat in our picture no matter where it may appear. In the below image, we are learning redundant features. The approach is not robust, as cats could appear in yet another position.  
+
+<img src="cat.png"
+	 alt="Cnn drawback"
+	 align="middle"
+	 style="height: 30%; margin-left: 150px;">  
+
+#### Convolution  
+
+<img src="cnnex.png"
+	 alt="Cnn Example"
+	 align="left"
+	 style="height: 30%;">  
+We analyze the influence of nearby pixels by using something called a filter. A filter is exactly what you think it is, in our situation, we take a filter of a size specified by the user (a rule of thumb is 3x3 or 5x5) and we move this across the image from top left to bottom right. For each point on the image, a value is calculated based on the filter using a convolution operation.  
+
+A filter could be related to anything, for pictures of humans, one filter could be associated with seeing noses, and our nose filter would give us an indication of how strongly a nose seems to appear in our image, and how many times and in what locations they occur. This reduces the number of weights that the neural network must learn compared to an MLP, and also means that when the location of these features changes it does not throw the neural network off.  
+
+<img src="cnnex2.png"
+	 alt="Cnn Example"
+	 align="left"
+	 style="height: 35%;"> 
+<img src="filex.png"
+	 alt="Cnn Example"
+	 align="middle"
+	 style="height: 35%;">   
+<br>
+
+If you are wondering how the different features are learned by the network, and whether it is possible that the network will learn the same features (having 10 nose filters would be kind of redundant), this is highly unlikely to happen. When building the network, we randomly specify values for the filters, which then continuously update themselves as the network is trained. It is very very unlikely that two filters that are the same will be produced unless the number of chosen filters is extremely large.  
+
+Some examples of filters, or kernels as we call them, are given above.  
+
+After the filters have passed over the image, a feature map is generated for each filter. These are then taken through an activation function, which decides whether a certain feature is present at a given location in the image. We can then do a lot of things, such as adding more filtering layers and creating more feature maps, which become more and more abstract as we create a deeper CNN. We can also use pooling layers in order to select the largest values on the feature maps and use these as inputs to subsequent layers. In theory, any type of operation can be done in pooling layers, but in practice, only max pooling is used because we want to find the outliers — these are when our network sees the feature!  
+
+<img src="cnnex3.png"
+	 alt="Cnn Example"
+	 align="middle"
+	 style="height: 50%;">   
+
+#### Comparision of different layers
+
+There are three types of layers in a convolutional neural network: convolutional layer, pooling layer, and fully connected layer. Each of these layers has different parameters that can be optimized and performs a different task on the input data.  
+
+
+<img src="tab1.png"
+	 alt="Table 1 Example"
+	 align="middle"
+	 style="height: 30%; margin-left: 190px;">    
+
+Convolutional layers are the layers where filters are applied to the original image, or to other feature maps in a deep CNN. This is where most of the user-specified parameters are in the network. The most important parameters are the number of kernels and the size of the kernels.  
+
+<img src="tab2.png"
+	 alt="Table 2 Example"
+	 align="middle"
+	 style="height: 30%; margin-left: 190px;">   
+
+Pooling layers are similar to convolutional layers, but they perform a specific function such as max pooling, which takes the maximum value in a certain filter region, or average pooling, which takes the average value in a filter region. These are typically used to reduce the dimensionality of the network.  
+
+<img src="tab3.png"
+	 alt="Table 3 Example"
+	 align="middle"
+	 style="height: 30%; margin-left: 190px;">
+
+Fully connected layers are placed before the classification output of a CNN and are used to flatten the results before classification. This is similar to the output layer of an MLP.  
+
+### One Shot Learning with Saimese Neural Networks
+
+
 ### PICKLING IN PYTHON
 
 Python pickle module is used for serializing and de-serializing a Python object structure. Any object in Python can be pickled so that it can be saved on disk. What pickle does is that it “serializes” the object first before writing it to file. Pickling is a way to convert a python object (list, dict, etc.) into a character stream. The idea is that this character stream contains all the information necessary to reconstruct the object in another python script.
